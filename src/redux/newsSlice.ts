@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getNoticias } from "src/api/noticias";
 import { NoticiasType } from "src/types/noticias";
@@ -34,9 +35,19 @@ export const buscarNoticias = createAsyncThunk<
   { country?: string; category?: string; q?: string; page?: number; target: keyof NoticiaState}
 >(
   'noticias/buscarNoticias',
-  async (params) => {
-    const noticias = await getNoticias(params);
-    return {noticias, page: params.page || 1, target: params.target};
+  async (params, {rejectWithValue}) => {
+    try {
+      const noticias = await getNoticias(params);
+      await AsyncStorage.setItem(`cache_${params.target}`, JSON.stringify(noticias))
+      return {noticias, page: params.page || 1, target: params.target};
+    } catch (error) {
+      const noticiaCached = await AsyncStorage.getItem(`cache_${params.target}`)
+      if (noticiaCached) {
+        const noticias = JSON.parse(noticiaCached) as NoticiasType[]
+        return {noticias, page: 1, target: params.target};
+      }
+    }
+    return rejectWithValue('Nenhuma notícia disponível ou cache de notícia')
   }
 );
 

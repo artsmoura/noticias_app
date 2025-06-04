@@ -19,8 +19,8 @@ export function MaisNoticiasScreen() {
   const route = useRoute<MaisNoticiasRouteProp>()
   const navigation = useNavigation<HomeScreenNavigationProp>();
   
-
   const categoria = route.params?.categoria
+  const flatListArray = noticias.slice(9); 
 
   useEffect(() => {
     dispatch(resetNoticias({ target: 'maisNoticiaState' }));
@@ -42,7 +42,7 @@ export function MaisNoticiasScreen() {
 
   return (
     <FlatList
-      data={noticias}
+      data={flatListArray}
       keyExtractor={(_, i) => i.toString()}
       renderItem={renderItem}
       onEndReached={loadMore}
