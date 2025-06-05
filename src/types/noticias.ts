@@ -8,3 +8,8 @@ export interface NoticiasType {
   content?: string
   page?: string
 }
+
+export interface NoticiasApiResponse {
+  totalResults: number
+  articles: NoticiasType[]
+}

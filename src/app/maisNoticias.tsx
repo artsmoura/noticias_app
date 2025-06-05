@@ -18,10 +18,10 @@ export function MaisNoticiasScreen() {
   const { noticias, status, page, hasMore } = useSelector((state: RootState) => state.noticias.maisNoticiaState)
   const route = useRoute<MaisNoticiasRouteProp>()
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  
   const categoria = route.params?.categoria
-  const flatListArray = noticias.slice(9); 
 
+  const flatListArray = (route.params && Object.keys(route.params).length > 0) ? noticias : noticias.slice(9);
+  
   useEffect(() => {
     dispatch(resetNoticias({ target: 'maisNoticiaState' }));
     dispatch(resetPagina({ target: 'maisNoticiaState' }));

@@ -1,9 +1,9 @@
 import { EXPO_PUBLIC_API_KEY } from '@env';
 import axios from "axios";
-import { NoticiasType } from 'src/types/noticias';
+import { NoticiasApiResponse } from 'src/types/noticias';
 
 
-export const getNoticias = async (params: { country?: string; category?: string; q?: string; page?: number }): Promise<NoticiasType[]> => {
+export const getNoticias = async (params: { country?: string; category?: string; q?: string; page?: number }): Promise<NoticiasApiResponse> => {
   const baseURL = params.q ? 'https://newsapi.org/v2/everything' : 'https://newsapi.org/v2/top-headlines';
   const response = await axios.get(baseURL, {
     params: {
@@ -13,5 +13,8 @@ export const getNoticias = async (params: { country?: string; category?: string;
       ...params
     }
   })
-  return response.data.articles as NoticiasType[]
+  return {
+    totalResults: response.data.totalResults,
+    articles: response.data.articles
+  }
 }

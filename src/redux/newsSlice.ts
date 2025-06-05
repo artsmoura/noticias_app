@@ -9,6 +9,7 @@ interface NoticiasStateGeral {
   error: string | null
   page: number
   hasMore: boolean
+  totalResults: number
 }
 
 interface NoticiaState {
@@ -21,7 +22,8 @@ const initialStateGeral: NoticiasStateGeral = {
   status: 'idle',
   error: null,
   page: 1,
-  hasMore: true
+  hasMore: true,
+  totalResults: 0
 }
 
 const initialState: NoticiaState = {
@@ -31,20 +33,20 @@ const initialState: NoticiaState = {
 
 
 export const buscarNoticias = createAsyncThunk<
-  { noticias: NoticiasType[]; page: number, target: keyof NoticiaState}, 
+  { noticias: NoticiasType[]; totalResults: number; page: number, target: keyof NoticiaState}, 
   { country?: string; category?: string; q?: string; page?: number; target: keyof NoticiaState}
 >(
   'noticias/buscarNoticias',
   async (params, {rejectWithValue}) => {
     try {
-      const noticias = await getNoticias(params);
-      await AsyncStorage.setItem(`cache_${params.target}`, JSON.stringify(noticias))
-      return {noticias, page: params.page || 1, target: params.target};
+      const {articles, totalResults} = await getNoticias(params);
+      await AsyncStorage.setItem(`cache_${params.target}`, JSON.stringify(articles))
+      return {noticias: articles, totalResults, page: params.page || 1, target: params.target};
     } catch (error) {
       const noticiaCached = await AsyncStorage.getItem(`cache_${params.target}`)
       if (noticiaCached) {
         const noticias = JSON.parse(noticiaCached) as NoticiasType[]
-        return {noticias, page: 1, target: params.target};
+        return {noticias, totalResults: noticias.length, page: 1, target: params.target};
       }
     }
     return rejectWithValue('Nenhuma notícia disponível ou cache de notícia')
@@ -77,11 +79,15 @@ const noticiasSlice = createSlice({
         state[target].error = null;
       })
       .addCase(buscarNoticias.fulfilled, (state, action) => {
-        const { noticias, page, target } = action.payload;
+        const { noticias, page, target, totalResults } = action.payload;
         const estadoAtual = state[target];
         estadoAtual.status = "succeeded";
         estadoAtual.page = page;
-        estadoAtual.hasMore = noticias.length > 0;
+        estadoAtual.totalResults = totalResults;
+
+        const totalNoticias = page > 1 ? estadoAtual.noticias.length + noticias.length : noticias.length
+
+        estadoAtual.hasMore = noticias.length > 0 && totalNoticias < totalResults
 
         if (page > 1) {
           estadoAtual.noticias = [...estadoAtual.noticias, ...noticias];
