@@ -1,4 +1,4 @@
-# Siscomoceb
+# Aplicativo de Notícias
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/artsmoura/noticias_app)
 ![GitHub language count](https://img.shields.io/github/languages/count/artsmoura/noticias_app)
