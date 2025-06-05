@@ -1,6 +1,6 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import NoticiaItem from "src/components/noticiaItem";
@@ -21,12 +21,15 @@ export function MaisNoticiasScreen() {
   const categoria = route.params?.categoria
 
   const flatListArray = (route.params && Object.keys(route.params).length > 0) ? noticias : noticias.slice(9);
-  
-  useEffect(() => {
-    dispatch(resetNoticias({ target: 'maisNoticiaState' }));
-    dispatch(resetPagina({ target: 'maisNoticiaState' }));
-    dispatch(buscarNoticias({ country: 'us', category: categoria, page: 1, target: 'maisNoticiaState' }));
-  }, [categoria])
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log('esta chegando aqui e a categoira eh: ', categoria)
+      dispatch(resetNoticias({ target: 'maisNoticiaState' }))
+      dispatch(resetPagina({ target: 'maisNoticiaState' }))
+      dispatch(buscarNoticias({ country: 'us', category: categoria, page: 1, target: 'maisNoticiaState' }))
+    }, [categoria])
+  )
 
   const loadMore = () => {
     if (status !== 'loading' && hasMore) {
