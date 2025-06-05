@@ -1,8 +1,11 @@
 import { Feather } from "@expo/vector-icons";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { NoticiasType } from "src/types/noticias";
+import { FormataData } from "../utils/formataData"
 
 export default function NoticiaItem({ noticia }: { noticia: NoticiasType }) {
+  const dataFormatada: string = (FormataData(noticia.publishedAt))
+
   return (
     <View style={styles.container}>
       {noticia.urlToImage ? (
@@ -20,8 +23,9 @@ export default function NoticiaItem({ noticia }: { noticia: NoticiasType }) {
         </View>
       )}
       <View style={styles.textArea}>
+        <Text style={styles.textSub}>{noticia.source.name}</Text>
         <Text style={styles.title}>{noticia.title}</Text>
-        {noticia.description && <Text>{noticia.description}</Text>}
+        <Text style={styles.textSub}>{dataFormatada}</Text>
       </View>
     </View>
   );
@@ -30,7 +34,6 @@ export default function NoticiaItem({ noticia }: { noticia: NoticiasType }) {
 const styles = StyleSheet.create({
   container: { 
     padding: 10, 
-    borderBottomWidth: 1, 
     borderColor: '#ccc',
     flexDirection: 'row'
   },
@@ -41,6 +44,7 @@ const styles = StyleSheet.create({
   textArea: {
     flex: 1,
     paddingLeft: 10,
+    justifyContent: 'space-between',
   },
   imageContainer: {
     width: 100,
@@ -56,7 +60,7 @@ const styles = StyleSheet.create({
   noImageContainer: {
     width: 100,
     height: 100,
-    backgroundColor: '#eee',
+    backgroundColor: '#dedede',
     marginRight: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -68,4 +72,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     textAlign: 'center',
   },
+  textSub: {
+    color: 'grey'
+  }
 });

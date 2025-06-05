@@ -9,7 +9,7 @@ import { buscarNoticias, resetNoticias, resetPagina } from "src/redux/newsSlice"
 import { RootState } from "src/redux/store";
 import { RootStackParamList } from "src/types/navigation";
 import { NoticiasType } from "src/types/noticias";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -19,8 +19,7 @@ export default function HomeScreen() {
   const dispatch = useDispatch<any>()
   const { noticias, status, error} = useSelector((state: RootState) => state.noticias.home)
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const safeAreaTab = useSafeAreaInsets()
-
+  
   const categorias = ['business', 'entertainment', 'health', 'science', 'sports', 'technology'];
 
   const loadData = () => {
@@ -65,15 +64,27 @@ export default function HomeScreen() {
             >
               {carroselArray.map((noticia, index) => (
                 <TouchableOpacity key={index} onPress={() => navigation.navigate('Detalhes', { noticia })}>
-                  <ImageBackground
-                    source={{ uri: noticia.urlToImage }}
-                    style={styles.cardImage}
-                    imageStyle={styles.imageStyle}
-                  >
-                    <View style={styles.textContainer}>
-                      <Text style={styles.infoText}>{noticia.title}</Text>
-                    </View>
-                  </ImageBackground>
+                  {noticia.urlToImage ? (
+                    <ImageBackground
+                      source={{ uri: noticia.urlToImage }}
+                      style={styles.cardImage}
+                      imageStyle={styles.imageStyle}
+                    >
+                      <View style={styles.textContainer}>
+                        <Text style={styles.infoText}>{noticia.title}</Text>
+                      </View>
+                    </ImageBackground>
+                  ):(
+                    <View style={[styles.cardImage, styles.noCardImage]}>
+                      <View style={styles.noImageContent}>
+                        <Ionicons name="image" size={34} color="#666" />
+                        <Text style={styles.noImageText}>Imagem não disponível</Text>
+                      </View>
+                      <View style={styles.textContainer}>
+                        <Text style={styles.infoText}>{noticia.title}</Text>
+                      </View>
+                    </View>  
+                  )}
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -143,13 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  normalDot: {
-    height: 8,
-    width: 8,
-    borderRadius: 4,
-    backgroundColor: 'silver',
-    marginHorizontal: 4,
-  },
   btnVerMais: {
     padding: 16,
     alignItems: 'center',
@@ -183,5 +187,24 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     resizeMode: 'cover'
-  }
+  },
+  noCardImage: {
+    backgroundColor: '#dedede',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  noImageContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingTop: 30
+  },
+  noImageText: {
+    fontSize: 15,
+    color: '#666',
+    marginTop: 4,
+    textAlign: 'center',
+  },
 });

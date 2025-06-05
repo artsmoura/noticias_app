@@ -23,11 +23,13 @@ export default function StackNavigation() {
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
+          fontSize: 20,
           fontWeight: 'bold',
         },
         headerRight: () => <PesquisaHeader />,
         headerTitle: "Notícias",
-        headerBackButtonDisplayMode: "minimal"
+        headerBackButtonDisplayMode: "minimal",
+        animation: 'default',
       }}
     >
       {isFavScreen ? (
@@ -47,7 +49,7 @@ export default function StackNavigation() {
         />
       )
       }
-      <Stack.Screen name="Detalhes" component={DetalheScreen} />
+      <Stack.Screen options={{headerShown: false}} name="Detalhes" component={DetalheScreen} />
       <Stack.Screen name="Resultados" component={ResultadoScreen} />
       <Stack.Screen 
         name="MaisNoticias"
